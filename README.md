@@ -4,10 +4,11 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
 ![CUDA](https://img.shields.io/badge/CUDA-12.x-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
 ![Colab](https://img.shields.io/badge/Google%20Colab-GPU%20T4-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![License](https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Statut-En%20cours-blue?style=for-the-badge)
 
-Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab.
+Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab. Inclut une application de démo interactive avec **Streamlit**.
 
 ---
 
@@ -22,7 +23,7 @@ Le dataset CIFAR-10 contient 60 000 images couleur (32×32 px) réparties en 10 
 
 | Classe | Classe | Classe | Classe | Classe |
 |--------|--------|--------|--------|--------|
-| ✈️ plane | 🚗 car | 🐦 bird | 🐱 cat | 🦌 deer |
+| ✈️ airplane | 🚗 automobile | 🐦 bird | 🐱 cat | 🦌 deer |
 | 🐶 dog | 🐸 frog | 🐴 horse | 🚢 ship | 🚚 truck |
 
 - **Entraînement** : 50 000 images
@@ -36,17 +37,18 @@ Le dataset CIFAR-10 contient 60 000 images couleur (32×32 px) réparties en 10 
 Input (3×32×32)
     │
     ▼
-Conv2d(3→64, 3×3) → BatchNorm → ReLU
-Conv2d(64→64, 3×3) → BatchNorm → ReLU → MaxPool(2×2)
-    │
+[Bloc 1] Conv2d(3→32, 3×3) → BatchNorm2d → ReLU → MaxPool(2×2)
+    │                                               32×32 → 16×16
     ▼
-Conv2d(64→128, 3×3) → BatchNorm → ReLU
-Conv2d(128→128, 3×3) → BatchNorm → ReLU → MaxPool(2×2)
-    │
+[Bloc 2] Conv2d(32→64, 3×3) → BatchNorm2d → ReLU → MaxPool(2×2)
+    │                                               16×16 → 8×8
     ▼
-Flatten → Dropout(0.5)
-FC(128×8×8 → 512) → ReLU → Dropout(0.5)
-FC(512 → 10)
+[Bloc 3] Conv2d(64→128, 3×3) → BatchNorm2d → ReLU → MaxPool(2×2)
+    │                                               8×8 → 4×4
+    ▼
+Flatten → Dropout(0.4)
+FC(128×4×4 → 256) → ReLU
+FC(256 → 10)
     │
     ▼
 Output (10 classes)
@@ -58,13 +60,13 @@ Output (10 classes)
 
 | Hyperparamètre | Valeur |
 |----------------|--------|
-| Optimiseur | SGD |
-| Learning rate | 0.01 |
-| Momentum | 0.9 |
-| Weight decay | 5e-4 |
+| Optimiseur | Adam |
+| Learning rate | 0.001 |
 | Batch size | 128 |
-| Epochs | 10 |
-| Scheduler | CosineAnnealingLR (T_max=10) |
+| Epochs | 15 |
+| Scheduler | StepLR (step_size=5, gamma=0.5) |
+| Dropout | 0.4 |
+| Normalisation | (0.5, 0.5, 0.5) / (0.5, 0.5, 0.5) |
 
 ---
 
@@ -73,7 +75,7 @@ Output (10 classes)
 ### Prérequis
 
 ```bash
-pip install torch torchvision matplotlib numpy
+pip install torch torchvision matplotlib streamlit pillow numpy
 ```
 
 ### Lancer sur Google Colab
@@ -90,40 +92,67 @@ print(torch.cuda.is_available())        # True
 print(torch.cuda.get_device_name(0))    # Tesla T4
 ```
 
+### Lancer l'application Streamlit
+
+Après avoir exécuté toutes les cellules du notebook (le fichier `model.pth` doit exister) :
+
+```bash
+streamlit run app.py
+```
+
 ### Structure du notebook
 
 ```
 📓 cifar10_cnn.ipynb
-├── 🔧 0. Configuration GPU & Dépendances
-├── 📦 1. Chargement et préparation des données CIFAR-10
-├── 🖼️  2. Visualisation des données d'entraînement
-├── 🧠 3. Architecture du réseau de neurones convolutif
-├── ⚙️  4. Fonctions de perte et optimiseur
-├── 🚀 5. Boucle d'entraînement
-└── 🔍 6. Inférence et visualisation des prédictions
+├── 🔧 1.  Installation des dépendances
+├── 📦 2.  Imports
+├── 🗃️  3.  Chargement du dataset CIFAR-10
+├── 🖼️  4.  Visualisation des données
+├── 🧠 5.  Architecture du modèle CNN
+├── 🚀 6.  Entraînement
+├── 🔍 7.  Évaluation
+├── 📈 8.  Courbe de loss
+├── 💾 9.  Sauvegarde du modèle
+├── 🔮 10. Fonction de prédiction
+├── 🧪 11. Test sur une image
+└── 🌐 12. Application Streamlit (app.py)
 ```
 
 ---
 
-## 📈 Résultats attendus
+## 📈 Résultats
 
 | Modèle | Précision |
 |--------|-----------|
-| CNN basique (original) | ~62% |
-| CNN amélioré (BatchNorm + Dropout) | ~85% |
+| CNN 3 blocs + BatchNorm + Dropout (ce projet) | ~75-80% |
 | ResNet-18 (transfer learning) | ~94% |
 
 ---
 
-## 🔧 Améliorations implémentées
+## 🔧 Caractéristiques techniques
 
-- ✅ **Data Augmentation** : RandomCrop, HorizontalFlip, ColorJitter
+- ✅ **3 blocs convolutifs** : 32 → 64 → 128 filtres avec BatchNorm
 - ✅ **Batch Normalization** : après chaque couche Conv2d
-- ✅ **Dropout** : p=0.5 avant les couches fully-connected
-- ✅ **Architecture plus profonde** : 64→128 filtres
-- ✅ **Learning Rate Scheduler** : CosineAnnealingLR
-- ✅ **Optimisation GPU** : `pin_memory=True`, `.to(device)` systématique
-- ✅ **Mode évaluation** : `net.eval()` + `torch.no_grad()` à l'inférence
+- ✅ **Dropout** : p=0.4 avant les couches fully-connected
+- ✅ **DataLoader optimisé** : `pin_memory=True`, `num_workers=2`
+- ✅ **Learning Rate Scheduler** : StepLR (divisé par 2 tous les 5 epochs)
+- ✅ **Inférence flexible** : accepte PIL Image ou Tensor
+- ✅ **App Streamlit** : démo interactive avec upload d'image
+- ✅ **Mode évaluation** : `model.eval()` + `torch.no_grad()` à l'inférence
+
+---
+
+## 🌐 Application Streamlit
+
+L'application `app.py` (générée automatiquement par la cellule 12 du notebook) permet de tester le modèle en uploadant n'importe quelle image :
+
+```
+1. Uploader une image JPG ou PNG
+2. Cliquer sur "Predict"
+3. Le modèle retourne la classe prédite parmi les 10 classes CIFAR-10
+```
+
+> ⚠️ Le fichier `model.pth` doit être présent dans le même dossier que `app.py`.
 
 ---
 
@@ -131,22 +160,23 @@ print(torch.cuda.get_device_name(0))    # Tesla T4
 
 ```
 cifar10-cnn/
-├── cifar10_cnn.ipynb       # Notebook principal
-├── cifar_net.pth           # Poids du modèle sauvegardés
+├── cifar10_cnn.ipynb       # Notebook principal (12 cellules)
+├── app.py                  # Application Streamlit (généré par cellule 12)
+├── model.pth               # Poids du modèle sauvegardés (généré à l'entraînement)
+├── requirements.txt        # Dépendances Python
 ├── data/                   # Dataset CIFAR-10 (téléchargé automatiquement)
 └── README.md
 ```
 
 ---
 
-## 🧪 Inférence
+## 🧪 Exemple d'inférence
 
 ```python
-net.eval()
-with torch.no_grad():
-    images, labels = images.to(device), labels.to(device)
-    outputs = net(images)
-    _, predicted = torch.max(outputs, 1)
+from PIL import Image
+image = Image.open("mon_image.jpg")
+prediction = predict_image(image)
+print(f"Classe prédite : {prediction}")
 ```
 
 ---
