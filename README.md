@@ -18,7 +18,7 @@ The interactive Streamlit app lets you upload any image and instantly get a pred
 
 | ✈️ Airplane | 🐱 Cat | 🐶 Dog |
 |:-----------:|:------:|:------:|
-| ![Airplane prediction]("C:\Users\ayman\OneDrive - Ecole Marocaine des Sciences de l'Ingénieur\Bureau\plane.png") | ![Cat prediction]("C:\Users\ayman\OneDrive - Ecole Marocaine des Sciences de l'Ingénieur\Bureau\cat.png") | ![Dog prediction]("C:\Users\ayman\OneDrive - Ecole Marocaine des Sciences de l'Ingénieur\Bureau\dog.png") |
+| ![Airplane prediction](plane.png) | ![Cat prediction](cat.png) | ![Dog prediction](dog.png) |
 | **Input:** Air Transat Airbus A310 | **Input:** Grey fluffy cat close-up | **Input:** Beagle portrait |
 | ✅ **Prediction: airplane** | ✅ **Prediction: cat** | ✅ **Prediction: dog** |
 
