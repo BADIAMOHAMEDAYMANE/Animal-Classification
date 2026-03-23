@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Statut-En%20cours-blue?style=for-the-badge)
 
-Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab. Inclut une application de démo interactive avec **Streamlit**.
+Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab et Kaggle. Inclut une application de démo interactive avec **Streamlit**.
 
 ---
 
@@ -18,7 +18,7 @@ The interactive Streamlit app lets you upload any image and instantly get a pred
 
 | ✈️ Airplane | 🐱 Cat | 🐶 Dog |
 |:-----------:|:------:|:------:|
-| ![Airplane prediction](plane.png) | ![Cat prediction](cat.png) | ![Dog prediction](dog.png) |
+| ![Airplane prediction]("C:\Users\ayman\OneDrive - Ecole Marocaine des Sciences de l'Ingénieur\Bureau\plane.png") | ![Cat prediction]("C:\Users\ayman\OneDrive - Ecole Marocaine des Sciences de l'Ingénieur\Bureau\cat.png") | ![Dog prediction]("C:\Users\ayman\OneDrive - Ecole Marocaine des Sciences de l'Ingénieur\Bureau\dog.png") |
 | **Input:** Air Transat Airbus A310 | **Input:** Grey fluffy cat close-up | **Input:** Beagle portrait |
 | ✅ **Prediction: airplane** | ✅ **Prediction: cat** | ✅ **Prediction: dog** |
 
