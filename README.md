@@ -9,6 +9,15 @@
 ![License](https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Statut-En%20cours-blue?style=for-the-badge)
 
+![Accuracy](https://img.shields.io/badge/Test%20Accuracy-~78%25-brightgreen?style=flat-square)
+![Epochs](https://img.shields.io/badge/Epochs-15-blue?style=flat-square)
+![Batch Size](https://img.shields.io/badge/Batch%20Size-128-blue?style=flat-square)
+![Optimizer](https://img.shields.io/badge/Optimizer-Adam-orange?style=flat-square)
+![LR](https://img.shields.io/badge/Learning%20Rate-0.001-orange?style=flat-square)
+![Dropout](https://img.shields.io/badge/Dropout-0.4-yellow?style=flat-square)
+![Params](https://img.shields.io/badge/Parameters-~500K-lightgrey?style=flat-square)
+![Hardware](https://img.shields.io/badge/Hardware-Tesla%20T4%20GPU-76B900?style=flat-square&logo=nvidia&logoColor=white)
+
 Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab et Kaggle. Inclut une application de démo interactive avec **Streamlit** et un déploiement **Dockerisé**.
 
 ---
@@ -219,6 +228,11 @@ docker run -p 8501:8501 votre-username/cifar10-cnn
 ---
 
 ## 📈 Résultats
+
+![Accuracy](https://img.shields.io/badge/Test%20Accuracy-~78%25-brightgreen?style=flat-square)
+![Loss](https://img.shields.io/badge/Final%20Loss-~0.65-yellow?style=flat-square)
+![Training Time](https://img.shields.io/badge/Training%20Time-~10%20min-blue?style=flat-square)
+![GPU](https://img.shields.io/badge/GPU-Tesla%20T4-76B900?style=flat-square&logo=nvidia&logoColor=white)
 
 | Modèle | Précision |
 |--------|-----------|
