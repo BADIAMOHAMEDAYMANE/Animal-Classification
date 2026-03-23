@@ -22,6 +22,14 @@ Implémentation d'un réseau de neurones convolutif (CNN) pour la classification
 
 ---
 
+## 🌐 Live Demo
+
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Live%20Demo-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://animal-classification-2gd59hwka4ppwvsjsnp7cp.streamlit.app/)
+
+> 🚀 **[Accéder à l'application déployée](https://animal-classification-2gd59hwka4ppwvsjsnp7cp.streamlit.app/)** — Testez le modèle directement dans votre navigateur, sans installation.
+
+---
+
 ## 🖼️ Demo — Streamlit App
 
 The interactive Streamlit app lets you upload any image and instantly get a prediction from the trained CNN model. Below are real inference examples across three different CIFAR-10 classes:
@@ -123,6 +131,8 @@ Après avoir exécuté toutes les cellules du notebook (le fichier `model.pth` d
 ```bash
 streamlit run app.py
 ```
+
+Ou directement via le déploiement en ligne : **https://animal-classification-2gd59hwka4ppwvsjsnp7cp.streamlit.app/**
 
 ### Structure du notebook
 
@@ -265,7 +275,9 @@ L'application `app.py` (générée automatiquement par la cellule 12 du notebook
 3. Le modèle retourne la classe prédite parmi les 10 classes CIFAR-10
 ```
 
-> ⚠️ Le fichier `model.pth` doit être présent dans le même dossier que `app.py`.
+🔗 **Application déployée** : https://animal-classification-2gd59hwka4ppwvsjsnp7cp.streamlit.app/
+
+> ⚠️ Pour une exécution locale, le fichier `model.pth` doit être présent dans le même dossier que `app.py`.
 
 ---
 
