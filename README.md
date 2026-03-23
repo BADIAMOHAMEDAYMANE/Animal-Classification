@@ -12,6 +12,40 @@ Implémentation d'un réseau de neurones convolutif (CNN) pour la classification
 
 ---
 
+## 🖼️ Demo — Streamlit App
+
+The interactive Streamlit app lets you upload any image and instantly get a prediction from the trained CNN model. Below are real inference examples across three different CIFAR-10 classes:
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="plane.png" alt="Airplane prediction" width="100%"/>
+      <br/>
+      <sub><b>Input:</b> Air Transat Airbus A310</sub>
+      <br/>
+      <sub>✅ <b>Prediction: airplane</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="cat.png" alt="Cat prediction" width="100%"/>
+      <br/>
+      <sub><b>Input:</b> Grey fluffy cat close-up</sub>
+      <br/>
+      <sub>✅ <b>Prediction: cat</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="dog.png" alt="Dog prediction" width="100%"/>
+      <br/>
+      <sub><b>Input:</b> Beagle portrait</sub>
+      <br/>
+      <sub>✅ <b>Prediction: dog</b></sub>
+    </td>
+  </tr>
+</table>
+
+> The model correctly classified all three images despite them being high-resolution real-world photos — very different from the 32×32 training data.
+
+---
+
 ## 📊 Dataset
 
 ![CIFAR-10](https://img.shields.io/badge/Dataset-CIFAR--10-orange?style=flat-square)
