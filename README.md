@@ -5,10 +5,11 @@
 ![CUDA](https://img.shields.io/badge/CUDA-12.x-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
 ![Colab](https://img.shields.io/badge/Google%20Colab-GPU%20T4-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/Licence-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Statut-En%20cours-blue?style=for-the-badge)
 
-Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab et Kaggle. Inclut une application de démo interactive avec **Streamlit**.
+Implémentation d'un réseau de neurones convolutif (CNN) pour la classification d'images sur le dataset **CIFAR-10**, entraîné sur GPU avec PyTorch dans Google Colab et Kaggle. Inclut une application de démo interactive avec **Streamlit** et un déploiement **Dockerisé**.
 
 ---
 
@@ -134,6 +135,89 @@ streamlit run app.py
 
 ---
 
+## 🐳 Docker
+
+L'application est entièrement **dockerisée** — aucune installation Python requise sur votre machine.
+
+### Prérequis
+
+Installer [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+### Structure des fichiers
+
+```
+cifar10-cnn/
+├── app.py
+├── model.pth
+├── Dockerfile
+└── requirements.txt
+```
+
+### Dockerfile
+
+```dockerfile
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+COPY model.pth .
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app.py", \
+     "--server.port=8501", \
+     "--server.headless=true", \
+     "--server.address=0.0.0.0"]
+```
+
+### Builder l'image
+
+```bash
+docker build -t cifar10-cnn .
+```
+
+### Lancer le conteneur
+
+```bash
+docker run -p 8501:8501 cifar10-cnn
+```
+
+Puis ouvrez **http://localhost:8501** dans votre navigateur. 🎉
+
+### Vérifier l'image
+
+```bash
+docker images
+```
+
+```
+REPOSITORY     TAG       IMAGE ID       CREATED         SIZE
+cifar10-cnn    latest    1a2ad8b6d609   5 minutes ago   ~1.5GB
+```
+
+### Publier sur Docker Hub (optionnel)
+
+```bash
+# Se connecter
+docker login
+
+# Tagger l'image
+docker tag cifar10-cnn votre-username/cifar10-cnn:latest
+
+# Pusher
+docker push votre-username/cifar10-cnn:latest
+
+# N'importe qui peut ensuite lancer l'app avec :
+docker pull votre-username/cifar10-cnn
+docker run -p 8501:8501 votre-username/cifar10-cnn
+```
+
+---
+
 ## 📈 Résultats
 
 | Modèle | Précision |
@@ -153,6 +237,7 @@ streamlit run app.py
 - ✅ **Inférence flexible** : accepte PIL Image ou Tensor
 - ✅ **App Streamlit** : démo interactive avec upload d'image
 - ✅ **Mode évaluation** : `model.eval()` + `torch.no_grad()` à l'inférence
+- ✅ **Dockerisé** : déploiement en une commande sur n'importe quelle machine
 
 ---
 
@@ -177,6 +262,7 @@ cifar10-cnn/
 ├── cifar10_cnn.ipynb       # Notebook principal (12 cellules)
 ├── app.py                  # Application Streamlit (généré par cellule 12)
 ├── model.pth               # Poids du modèle sauvegardés (généré à l'entraînement)
+├── Dockerfile              # Configuration Docker
 ├── requirements.txt        # Dépendances Python
 ├── data/                   # Dataset CIFAR-10 (téléchargé automatiquement)
 └── README.md
