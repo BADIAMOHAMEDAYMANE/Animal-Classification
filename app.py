@@ -42,7 +42,6 @@ class CNN(nn.Module):
         x = x.view(x.size(0), -1)
         return self.classifier(x)
 
-# -- Load CIFAR-10 model --
 candidate_paths = [
     "model.pth",
     os.path.join(os.path.dirname(__file__), "model.pth"),
@@ -63,7 +62,6 @@ else:
     st.error("model.pth not found. Please make sure the file is present.")
     st.stop()
 
-# -- Load MobileNetV2 pre-filter --
 @st.cache_resource
 def load_mobilenet():
     m = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
@@ -72,7 +70,6 @@ def load_mobilenet():
 
 mobilenet = load_mobilenet()
 
-# -- Transforms --
 transform_cifar = transforms.Compose([
     transforms.Resize((32, 32)),
     transforms.ToTensor(),
@@ -85,7 +82,6 @@ transform_mobilenet = transforms.Compose([
     transforms.Normalize([0.485,0.456,0.406],[0.229,0.224,0.225])
 ])
 
-# -- Pre-filter using MobileNet --
 def prefilter(image):
     img = transform_mobilenet(image).unsqueeze(0)
     with torch.no_grad():
@@ -97,7 +93,6 @@ def prefilter(image):
             return True
     return False
 
-# -- OOD detection --
 def entropy(probs):
     log_p = torch.log(probs + 1e-9)
     return float(-torch.sum(probs * log_p).item())
@@ -115,7 +110,6 @@ def is_ood(probs, confidence_threshold=0.80, entropy_threshold=0.60):
         return True, "high uncertainty (entropy " + f"{rel_entropy:.0%} of max)"
     return False, "confidence " + f"{conf_val:.1%}"
 
-# -- UI --
 st.title("CIFAR-10 Classifier")
 st.caption("Classes: airplane - automobile - bird - cat - deer - dog - frog - horse - ship - truck")
 
@@ -146,4 +140,3 @@ if file:
                 st.subheader("Probability distribution")
                 prob_dict = {cls: float(p) for cls, p in zip(classes, probs[0])}
                 st.bar_chart(prob_dict)
-```
