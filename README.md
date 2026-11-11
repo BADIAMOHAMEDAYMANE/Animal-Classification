@@ -44,6 +44,15 @@ The interactive Streamlit app lets you upload any image and instantly get a pred
 
 ---
 
+## 🛡️ Robustesse de la démo
+
+Un CNN entraîné sur CIFAR-10 répond toujours l'une des 10 classes, même pour une image qui n'a rien à voir (un visage, un document…). L'application ajoute donc deux garde-fous :
+
+1. **Filtre hors domaine** : un **MobileNetV2** pré-entraîné sur ImageNet analyse d'abord l'image (224×224). Si aucune de ses 5 meilleures classes ne correspond à une catégorie proche de CIFAR-10, l'image est classée **UNKNOWN**.
+2. **Rejet des prédictions peu sûres** : la prédiction du CNN est aussi rejetée (**UNKNOWN**) si la confiance maximale est **inférieure à 0,80** ou si l'**entropie normalisée** des probabilités (entropie / ln 10) **dépasse 0,60**.
+
+---
+
 ## 📊 Dataset
 
 ![CIFAR-10](https://img.shields.io/badge/Dataset-CIFAR--10-orange?style=flat-square)
@@ -134,10 +143,15 @@ streamlit run app.py
 
 Ou directement via le déploiement en ligne : **https://animal-classification-2gd59hwka4ppwvsjsnp7cp.streamlit.app/**
 
-### Structure du notebook
+### Notebooks
+
+- `ImageClassification.ipynb` : version Google Colab (GPU T4)
+- `AnimalClassification.ipynb` : version Kaggle (GPU T4, précision mixte avec `torch.amp.autocast`)
+
+Étapes suivies :
 
 ```
-📓 cifar10_cnn.ipynb
+📓 Notebook
 ├── 🔧 1.  Installation des dépendances
 ├── 📦 2.  Imports
 ├── 🗃️  3.  Chargement du dataset CIFAR-10
@@ -162,46 +176,24 @@ L'application est entièrement **dockerisée** — aucune installation Python re
 
 Installer [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-### Structure des fichiers
+### Fichiers Docker
 
-```
-cifar10-cnn/
-├── app.py
-├── model.pth
-├── Dockerfile
-└── requirements.txt
-```
+- `Dockerfile` : image `python:3.10-slim`, roues PyTorch **CPU** (image plus légère), poids MobileNetV2 téléchargés au build
+- `docker-compose.yml` : service `cifar10-app` exposé sur le port 8501
+- `.dockerignore` : exclut notebooks, images de démo et dossier `.git`
 
-### Dockerfile
+### Lancer avec Docker Compose (recommandé)
 
-```dockerfile
-FROM python:3.10-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY app.py .
-COPY model.pth .
-
-EXPOSE 8501
-
-CMD ["streamlit", "run", "app.py", \
-     "--server.port=8501", \
-     "--server.headless=true", \
-     "--server.address=0.0.0.0"]
+```bash
+docker compose up -d --build
 ```
 
-### Builder l'image
+Pour arrêter : `docker compose down`
+
+### Ou avec Docker seul
 
 ```bash
 docker build -t cifar10-cnn .
-```
-
-### Lancer le conteneur
-
-```bash
 docker run -p 8501:8501 cifar10-cnn
 ```
 
@@ -215,7 +207,7 @@ docker images
 
 ```
 REPOSITORY     TAG       IMAGE ID       CREATED         SIZE
-cifar10-cnn    latest    1a2ad8b6d609   5 minutes ago   ~1.5GB
+cifar10-cnn    latest    1a2ad8b6d609   5 minutes ago   __IMAGE_SIZE__
 ```
 
 ### Publier sur Docker Hub (optionnel)
@@ -244,10 +236,12 @@ docker run -p 8501:8501 votre-username/cifar10-cnn
 ![Training Time](https://img.shields.io/badge/Training%20Time-~10%20min-blue?style=flat-square)
 ![GPU](https://img.shields.io/badge/GPU-Tesla%20T4-76B900?style=flat-square&logo=nvidia&logoColor=white)
 
-| Modèle | Précision |
+| Modèle | Accuracy (jeu de test) |
 |--------|-----------|
-| CNN 3 blocs + BatchNorm + Dropout (ce projet) | ~75-80% |
-| ResNet-18 (transfer learning) | ~94% |
+| CNN 3 blocs + BatchNorm + Dropout (**ce projet**) | **~78 %** |
+| ResNet-18 en transfer learning (*valeur de référence de la littérature, non entraîné dans ce projet*) | ~94 % |
+
+> Piste d'amélioration : data augmentation (crop aléatoire, flip horizontal) et transfer learning pour se rapprocher des ~94 %.
 
 ---
 
@@ -260,19 +254,20 @@ docker run -p 8501:8501 votre-username/cifar10-cnn
 - ✅ **Learning Rate Scheduler** : StepLR (divisé par 2 tous les 5 epochs)
 - ✅ **Inférence flexible** : accepte PIL Image ou Tensor
 - ✅ **App Streamlit** : démo interactive avec upload d'image
+- ✅ **Filtre hors domaine** : MobileNetV2 + rejet si confiance < 0,80 ou entropie normalisée > 0,60
 - ✅ **Mode évaluation** : `model.eval()` + `torch.no_grad()` à l'inférence
-- ✅ **Dockerisé** : déploiement en une commande sur n'importe quelle machine
+- ✅ **Dockerisé** : `docker compose up -d` sur n'importe quelle machine
 
 ---
 
 ## 🌐 Application Streamlit
 
-L'application `app.py` (générée automatiquement par la cellule 12 du notebook) permet de tester le modèle en uploadant n'importe quelle image :
+L'application `app.py` permet de tester le modèle en uploadant n'importe quelle image :
 
 ```
 1. Uploader une image JPG ou PNG
 2. Cliquer sur "Predict"
-3. Le modèle retourne la classe prédite parmi les 10 classes CIFAR-10
+3. Le modèle retourne la classe prédite parmi les 10 classes CIFAR-10 (ou UNKNOWN si l'image est hors domaine ou la prédiction peu sûre), avec le graphique des probabilités
 ```
 
 🔗 **Application déployée** : https://animal-classification-2gd59hwka4ppwvsjsnp7cp.streamlit.app/
@@ -284,13 +279,17 @@ L'application `app.py` (générée automatiquement par la cellule 12 du notebook
 ## 📁 Structure du projet
 
 ```
-cifar10-cnn/
-├── cifar10_cnn.ipynb       # Notebook principal (12 cellules)
-├── app.py                  # Application Streamlit (généré par cellule 12)
-├── model.pth               # Poids du modèle sauvegardés (généré à l'entraînement)
-├── Dockerfile              # Configuration Docker
-├── requirements.txt        # Dépendances Python
-├── data/                   # Dataset CIFAR-10 (téléchargé automatiquement)
+Animal-Classification/
+├── ImageClassification.ipynb    # Notebook Google Colab
+├── AnimalClassification.ipynb   # Notebook Kaggle (précision mixte)
+├── app.py                       # Application Streamlit (CNN + filtre MobileNetV2)
+├── model.pth                    # Poids du modèle entraîné
+├── requirements.txt             # Dépendances (PyTorch CPU)
+├── Dockerfile                   # Image Docker de l'application
+├── docker-compose.yml           # Lancement en une commande
+├── .dockerignore
+├── .devcontainer/               # Environnement de développement (Codespaces)
+├── plane.png, cat.png, dog.png  # Captures de démonstration
 └── README.md
 ```
 

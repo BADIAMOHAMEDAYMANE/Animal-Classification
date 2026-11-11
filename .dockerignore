@@ -1,0 +1,6 @@
+.git
+.devcontainer
+*.ipynb
+*.png
+__pycache__
+README.md

@@ -1,0 +1,7 @@
+services:
+  cifar10-app:
+    build: .
+    image: cifar10-cnn
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
