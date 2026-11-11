@@ -207,7 +207,7 @@ docker images
 
 ```
 REPOSITORY     TAG       IMAGE ID       CREATED         SIZE
-cifar10-cnn    latest    1a2ad8b6d609   5 minutes ago   __IMAGE_SIZE__
+cifar10-cnn    latest    1a2ad8b6d609   5 minutes ago   1.76GB
 ```
 
 ### Publier sur Docker Hub (optionnel)
